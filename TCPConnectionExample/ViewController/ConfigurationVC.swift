@@ -68,7 +68,7 @@ class ConfigurationVC: UIViewController, AppSocketDelegate {
         try?  Server.shared.start(port: UInt16(8080))
 //        ServerConnection.shared
       
-        
+        self.txtIP.text = "127.0.0.1"
         
 //        performSegue(withIdentifier: "Showdata", sender: nil)
         
@@ -77,7 +77,8 @@ class ConfigurationVC: UIViewController, AppSocketDelegate {
         super.viewDidLoad()
         ProgressActivity.isHidden = true
         ProgressActivity.stopAnimating()
-
+        Server.shared.delegate = self
+        Client.shared.ConnectionDelegate = self
         // Do any additional setup after loading the view.
     }
     
