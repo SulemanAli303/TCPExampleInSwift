@@ -145,13 +145,16 @@ class Server {
 
     func stateDidChange(to newState: NWListener.State) {
         switch newState {
+        case .waiting(let err):
+            print(err)
+//            delegate?.didConnected(Connected: true)
         case .ready:
-            delegate?.didConnected(Connected: true)
+//            delegate?.didConnected(Connected: true)
           print("Server ready.")
         case .failed(let error):
             delegate?.didConnected(Connected: false)
             print("Server failure, error: \(error.localizedDescription)")
-            exit(EXIT_FAILURE)
+         
         default:
             break
         }
@@ -164,9 +167,12 @@ class Server {
             self.connectionDidStop(connection)
         }
         connection.start(nwConnection: nwConnection)
+        
         connection.delegate = self.delegate
-        connection.send(data: "Welcome you are connection: \(connection.id)".data(using: .utf8)!)
-        print("server did open connection \(connection.id)")
+        
+        self.delegate?.didConnected(Connected: true)
+        
+       print("server did open connection \(connection.id)")
     }
     
     func  sendData(data:Data){
@@ -198,7 +204,7 @@ class Client {
     var port: NWEndpoint.Port!
     var ConnectionDelegate:AppSocketDelegate?{
         didSet{
-            connection.delegate = ConnectionDelegate
+            connection?.delegate = ConnectionDelegate
         }
     }
     static var shared:Client = Client()
@@ -226,9 +232,9 @@ class Client {
 
     func didStopCallback(error: Error?) {
         if error == nil {
-            exit(EXIT_SUCCESS)
+         
         } else {
-            exit(EXIT_FAILURE)
+            print(error)
         }
     }
 }

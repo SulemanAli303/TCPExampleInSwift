@@ -17,23 +17,16 @@ class ViewController: UIViewController, AppSocketDelegate {
     }
     
     func RecievedData(data: Data) {
-        if isSever {
-            
-        }
-        else {
-            if FirstIV.image == nil {
-                FirstIV.image = UIImage(data: data)
-                
+        DispatchQueue.main.async {
+            if  self.FirstIV.image == nil {
+                self.FirstIV.image = UIImage(data: data)
             }
-            else if SecondIV.image == nil {
-                SecondIV.image = UIImage(data: data)
-                
+            else if self.SecondIV.image == nil {
+                self.SecondIV.image = UIImage(data: data)
             }
-           else if ThirdtIV.image == nil {
-                ThirdtIV.image = UIImage(data: data)
-                
+            else if self.ThirdtIV.image == nil {
+                self.ThirdtIV.image = UIImage(data: data)
             }
-            
         }
     }
     
@@ -54,20 +47,18 @@ class ViewController: UIViewController, AppSocketDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        Client.shared.ConnectionDelegate = self
+        Server.shared.delegate = self
         FirstIVprogressBar.progress = 0
         SecondIVprogressBar.progress = 0
         ThirdtIVprogressBar.progress = 0
         objVM = ViewModel(context: self)
         objVM.delegate = self
         self.lblIP.text = "IP: " + UIDevice.current.IP()
-        if isSever {
-            Server.shared.delegate = self
-            btnDownload.isHidden = true
-        }
-        else{
-            Client.shared.ConnectionDelegate = self
-        }
+        Server.shared.delegate = self
+        
+        Client.shared.ConnectionDelegate = self
+        
         
         // Do any additional setup after loading the view.
     }
@@ -93,6 +84,7 @@ class ViewController: UIViewController, AppSocketDelegate {
 
 extension ViewController:ViewModelDelegate{
     func didDownload(tagId: Int, img: UIImage) {
+        
         Server.shared.sendData(data:img.jpegData(compressionQuality: 0.5)! )
         DispatchQueue.main.async {
             [weak self] in
